@@ -1,3 +1,5 @@
+// Fichero estatico js (no usamos express)
+
 const fs = require('fs');
 
 // codigo conexion mysql (prueba)
@@ -24,14 +26,48 @@ const lecturaJSON = (direccion) => {
 };
 
 const creacionInsertProvincia = (fichero) => {
-	let insertProvincia = 'INSERT INTO provincia (codigo, nombre)';
-	let insertLocalidad = 'INSERT INTO localidad (codigo, id_provincia, nombre)';
+	let insertProvincia =
+		'INSERT INTO provincia (codigo, nombre) VALUES ("Gipuzkoa", 20), ("Bizkaia", 48), ("Araba", 01)';
+	for (let i = 0; i < fichero.length; i++) {
+		console.log(fichero[i].territory, ' ', fichero[i].postalcode.substr(0, 2));
+	}
+};
+
+const creacionInsertLocalidad = (fichero) => {
+	let insertLocalidad = 'INSERT INTO localidad (id_provincia, codigo , nombre)';
+	let localidades = [];
+	let localidadesText = '';
+	// Seleccionar localidades no repetidas
+	for (let i = 0; i < fichero.length; i++) {
+		let contadorLocalidades = 0;
+		for (let j = 0; j < localidades.length; j++) {
+			if (fichero[i].municipality == localidades[j].nombre) {
+				contadorLocalidades++;
+			}
+		}
+		if (contadorLocalidades == 0) {
+			localidades.push({
+				nombre: fichero[i].municipality,
+				codigo: fichero[i].postalcode.replace('.', ''),
+			});
+		}
+	}
+
+	// Crear string localidades
+	for (let i = 0; i < localidades.length; i++) {
+		localidadesText += `(${localidades[i].nombre}, ${localidades[i].codigo}),`;
+	}
+	console.log(localidadesText);
+};
+
+const creacionInsertBiblioteca = (fichero) => {
 	let insertBiblioteca =
 		'INSERT INTO biblioteca (codigoPostal, descripcion, email, id_localidad, latitud, longitud, nombre, telefono, tipo)';
+
 	for (let i = 0; i < fichero.length; i++) {
-		consulta;
+		console.log(fichero[i].territory, ' ', fichero[i].postalcode.replace('.', ''));
 	}
 };
 
 let eus = lecturaJSON('./static/json/bibliotecas.json');
-creacionInsert(eus);
+creacionInsertLocalidad(eus);
