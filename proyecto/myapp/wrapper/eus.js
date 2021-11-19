@@ -8,7 +8,7 @@ const mysql = require('mysql-await');
 let con = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
-	password: '',
+	password: 'root',
 	database: 'IEI',
 });
 con.connect(function (err) {
