@@ -1,7 +1,3 @@
-const fs = require("fs");
-const parser = require("xml2json");
-const { Builder, Key, By } = require("selenium-webdriver");
-
 const mysql = require("mysql-await");
 let con = mysql.createConnection({
   host: "localhost",
@@ -9,6 +5,11 @@ let con = mysql.createConnection({
   password: "root",
   database: "IEI",
 });
+const { Builder, Key, By, Window } = require("selenium-webdriver");
+const csvtojson = require("csvtojson");
+const csvFilePath = "./static/directorio-de-bibliotecas-valencianas_2020.csv";
+
+// Conexion MYSQL
 con.connect(function (err) {
   if (err) {
     console.log("Error connecting to Db");
@@ -17,21 +18,22 @@ con.connect(function (err) {
   console.log("Connection established");
 });
 
-// Creamos el driver de la pagina distritopostal
+// WebDriver
 let driver = new Builder().forBrowser("chrome").build();
-driver.get("http://distritopostal.es");
+driver.get(
+  "https://www.arumeinformatica.es/blog/buscar-coordenadas-gps-en-google-maps/"
+);
+// driver.executeScript("window.scroll(0, 1000)");
 
-// Parse
-const lecturaXML = (direccion) => {
-  let data = fs.readFileSync(direccion, "utf8");
-  return data;
-};
+// CSV2JSON
 
-let cat = lecturaXML("./static/biblioteques.xml");
+const converter = csvtojson({ delimiter: ";" });
+converter.fromFile(csvFilePath).then((data) => {
+  // console.log(data);
+  creacionInsertBiblioteca(data);
+});
 
-let json = parser.toJson(cat);
-json = JSON.parse(json);
-
+// Inserts
 const creacionInsertProvincia = async (fichero) => {
   let insertProvincia = "INSERT INTO provincia (nombre, codigo) VALUES ";
   let provincias = [];
@@ -40,35 +42,21 @@ const creacionInsertProvincia = async (fichero) => {
     let contadorProvincias = 0;
 
     for (let j = 0; j < provincias.length; j++) {
-      if (fichero[i].cpostal.substr(0, 2) == provincias[j].codigo) {
+      if (fichero[i].COD_PROVINCIA == provincias[j].codigo) {
         contadorProvincias++;
       }
     }
     if (contadorProvincias == 0) {
-      // Introducimos en el campo qcp el codigo postal y presionamos enter
-      await driver
-        .findElement(By.id("qcp"))
-        .sendKeys(fichero[i].cpostal.substr(0, 2), Key.ENTER);
-
-      // Obtenemos el texto de la provincia
-      let provincia = await driver
-        .findElement(By.className("youarehere"))
-        .getText();
       provincias.push({
-        nombre: provincia,
-        codigo: fichero[i].cpostal.substr(0, 2),
+        nombre: fichero[i].NOM_PROVINCIA,
+        codigo: fichero[i].COD_PROVINCIA,
       });
-      insertProvincia += `("${provincia}", ${fichero[i].cpostal.substr(
-        0,
-        2
-      )}),`;
+      insertProvincia += `("${fichero[i].NOM_PROVINCIA}", ${fichero[i].COD_PROVINCIA}),`;
     }
   }
 
   insertProvincia = insertProvincia.substring(0, insertProvincia.length - 1);
-  await driver.quit();
-  // await con.awaitQuery(insertProvincia);
-  console.log(provincias);
+  await con.awaitQuery(insertProvincia);
   con.end();
 };
 
@@ -83,7 +71,7 @@ const creacionInsertLocalidad = async (fichero) => {
 
     // Buscar duplicados
     for (let j = 0; j < localidades.length; j++) {
-      if (fichero[i].cpostal.substr(0, 2) == localidades[j].codigo) {
+      if (fichero[i].COD_PROVINCIA == localidades[j].codigo) {
         contadorLocalidades++;
       }
     }
@@ -92,21 +80,14 @@ const creacionInsertLocalidad = async (fichero) => {
     for (let k = 0; k < provincias.length; k++) {
       if (contadorLocalidades == 0) {
         // creacion del objeto para evitar duplicados
-        if (fichero[i].cpostal.substr(0, 2) == provincias[k].codigo) {
+        if (fichero[i].COD_PROVINCIA == provincias[k].codigo) {
           localidades.push({
             id_provincia: provincias[k].id_provincia,
-            nombre: fichero[i].poblacio,
-            codigo: fichero[i].codi_municipi.substr(
-              3,
-              fichero[i].codi_municipi.length
-            ),
+            nombre: fichero[i].NOM_MUNICIPIO,
+            codigo: fichero[i].COD_MUNICIPIO,
           });
           // Creacion del string
-          insertLocalidad += `(${
-            localidades[localidades.length - 1].id_provincia
-          }, "${localidades[localidades.length - 1].nombre}", ${
-            localidades[localidades.length - 1].codigo
-          }),`;
+          insertLocalidad += `(${provincias[k].id_provincia}, "${fichero[i].NOM_MUNICIPIO}", ${fichero[i].COD_MUNICIPIO}),`;
           contadorLocalidades++;
         }
       }
@@ -114,6 +95,7 @@ const creacionInsertLocalidad = async (fichero) => {
   }
   insertLocalidad = insertLocalidad.substring(0, insertLocalidad.length - 1);
   await con.awaitQuery(insertLocalidad);
+  con.end();
 };
 
 const creacionInsertBiblioteca = async (fichero) => {
@@ -126,7 +108,7 @@ const creacionInsertBiblioteca = async (fichero) => {
 
     // Buscar duplicados
     for (let j = 0; j < bibliotecas.length; j++) {
-      if (fichero[i].nom == bibliotecas[j].nombre) {
+      if (fichero[i].NOMBRE == bibliotecas[j].nombre) {
         contadorBibliotecas++;
       }
     }
@@ -135,31 +117,41 @@ const creacionInsertBiblioteca = async (fichero) => {
     for (let k = 0; k < localidades.length; k++) {
       if (contadorBibliotecas == 0) {
         // creacion del objeto para evitar duplicados
-        if (fichero[i].poblacio == localidades[k].nombre) {
-          bibliotecas.push({
-            id_localidad: localidades[k].id_localidad,
-            codigoPostal: fichero[i].cpostal,
-            descripcion: fichero[i].nom.replace('"', "").replace('"', ""),
-            email: fichero[i].email,
-            latitud: fichero[i].latitud,
-            tipo:
-              typeof fichero[i].propietats !== "undefined"
-                ? fichero[i].propietats.toString().indexOf("Privada") !== -1
-                  ? "Privada"
-                  : "Publica"
-                : "Publica",
-            tipo2: fichero[i].propietats,
-            longitud: fichero[i].longitud,
-            telefono:
-              typeof fichero[i].telefon1 !== "undefined"
-                ? fichero[i].telefon1
-                    .replace(/ /g, "")
-                    .replace("/", "")
-                    .substring(0, 9)
-                : "0",
-            nombre: fichero[i].nom.replace('"', "").replace('"', ""),
-            direccion: fichero[i].via,
-          });
+        if (fichero[i].NOM_MUNICIPIO == localidades[k].nombre) {
+          try {
+            let direccion = driver.findElement(By.id("geo_directions"));
+            await direccion.clear();
+
+            await direccion.sendKeys(
+              `${fichero[i].DIRECCION}, ${fichero[i].NOM_PROVINCIA}`
+            );
+
+            await driver.findElement(By.id("geo-form-button")).click();
+
+            // Obtenemos el texto de la provincia
+            let texto = await driver.findElement(By.id("infowindow")).getText();
+
+            let latitud = texto.substring(
+              texto.indexOf("Latitud:") + 9,
+              texto.indexOf("Latitud:") + 18
+            );
+            let longitud = texto.substring(
+              texto.indexOf("Longitud:") + 9,
+              texto.indexOf("Longitud:") + 18
+            );
+            bibliotecas.push({
+              id_localidad: localidades[k].id_localidad,
+              codigoPostal: fichero[i].CP,
+              descripcion: fichero[i].NOMBRE,
+              email: fichero[i].EMAIL,
+              latitud: latitud || 0,
+              tipo: fichero[i].DESC_CARACTER,
+              longitud: longitud || 0,
+              telefono: fichero[i].TELEFONO.substring(5, 14),
+              nombre: fichero[i].NOMBRE,
+              direccion: fichero[i].DIRECCION,
+            });
+          } catch (e) {}
 
           // Creacion del string
           insertBiblioteca += `(${
@@ -179,12 +171,9 @@ const creacionInsertBiblioteca = async (fichero) => {
       }
     }
   }
+  console.log(bibliotecas);
 
   insertBiblioteca = insertBiblioteca.substring(0, insertBiblioteca.length - 1);
-  console.log(insertBiblioteca);
-  await con.awaitQuery(insertBiblioteca);
+
+  // await con.awaitQuery(insertBiblioteca);
 };
-console.log(json.response.row);
-// creacionInsertBiblioteca(json.response.row);
-// creacionInsertLocalidad(json.response.row);
-creacionInsertProvincia(json.response.row);
