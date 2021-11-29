@@ -1,29 +1,9 @@
-// Fichero estatico js (no usamos express)
-
 const fs = require("fs");
-
-// codigo conexion mysql (prueba)
-const mysql = require("mysql-await");
-
-let con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "root",
-  database: "IEI",
-});
-con.connect(function (err) {
-  if (err) {
-    console.log("Error connecting to Db");
-    return;
-  }
-  console.log("Connection established");
-});
-//
+const { con } = require("../app");
 
 const lecturaJSON = (direccion) => {
   let data = fs.readFileSync(direccion, "utf8");
-  let obj = JSON.parse(data);
-  return obj;
+  return JSON.parse(data);
 };
 
 const creacionInsertProvincia = async (fichero) => {
@@ -48,6 +28,7 @@ const creacionInsertProvincia = async (fichero) => {
     }
   }
   insertProvincia = insertProvincia.substring(0, insertProvincia.length - 1);
+
   await con.awaitQuery(insertProvincia);
 };
 
@@ -158,10 +139,19 @@ const creacionInsertBiblioteca = async (fichero) => {
 };
 
 let eus = lecturaJSON("./static/bibliotecas.json");
-creacionInsertProvincia(eus).finally(() => {
-  creacionInsertLocalidad(eus).finally(() => {
-    creacionInsertBiblioteca(eus).finally(() => {
-      con.end();
+const consultaPreviaEUS = con.awaitQuery(
+  "SELECT * FROM `provincia` WHERE `nombre` = 'Gipuzkoa' "
+);
+consultaPreviaEUS.then((data) => {
+  if (data[0] == undefined) {
+    creacionInsertProvincia(eus).finally(() => {
+      creacionInsertLocalidad(eus).finally(() => {
+        creacionInsertBiblioteca(eus);
+      });
     });
-  });
+  } else {
+    console.log("La base de datos de Euskadi ya está cargada");
+  }
 });
+
+module.exports = consultaPreviaEUS;
