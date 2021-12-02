@@ -6,9 +6,13 @@ const router = express.Router();
 router.get("/", function (req, res) {
   res.send("respond with a resource");
 });
+
 router.post("/provincias", function (req, res) {
   cargarProvincia(req.body.provincia);
-  res.send("funciona");
+  res.render("index", {
+    title: req.body.provincia,
+    message: `${req.body.provincia} ha sido cargada con exito`,
+  });
 });
 
 module.exports = router;

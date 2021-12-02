@@ -153,7 +153,7 @@ consultaPreviaCAT.then((data) => {
       return data;
     };
 
-    let cat = lecturaXML("../static/biblioteques.xml");
+    let cat = lecturaXML("./static/biblioteques.xml");
 
     let json = parser.toJson(cat);
     json = JSON.parse(json);

@@ -3,7 +3,7 @@ const { con } = require("../app");
 const { Builder, Key, By, Window } = require("selenium-webdriver");
 let driver;
 const csvtojson = require("csvtojson");
-const csvFilePath = "../static/directorio-de-bibliotecas-valencianas_2020.csv";
+const csvFilePath = "./static/directorio-de-bibliotecas-valencianas_2020.csv";
 
 const consultaPreviaCV = con.awaitQuery(
   "SELECT * FROM `provincia` WHERE `nombre` = 'VALENCIA'"
