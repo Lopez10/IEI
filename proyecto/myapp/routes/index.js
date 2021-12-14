@@ -1,5 +1,5 @@
 const express = require("express");
-const cargarProvincia = require("../functions/cargarProvincias");
+const { cargarProvincia } = require("../functions/cargarProvincias");
 const router = express.Router();
 
 /* GET home page. */

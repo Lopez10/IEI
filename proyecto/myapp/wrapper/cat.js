@@ -3,9 +3,6 @@ const parser = require("xml2json");
 const { con } = require("../app");
 const { Builder, Key, By } = require("selenium-webdriver");
 
-// Creamos el driver de la pagina distritopostal
-let driver = new Builder().forBrowser("chrome").build();
-
 const creacionInsertProvincia = async (fichero) => {
   let insertProvincia = "INSERT INTO provincia (nombre, codigo) VALUES ";
   let provincias = [];
@@ -141,31 +138,33 @@ const creacionInsertBiblioteca = async (fichero) => {
   con.awaitQuery(insertBiblioteca);
 };
 
-let consultaPreviaCAT = con.awaitQuery(
-  "SELECT * FROM `provincia` WHERE `nombre` = 'Barcelona'"
-);
-consultaPreviaCAT.then((data) => {
-  if (data[0] === undefined) {
-    driver.get("http://distritopostal.es");
-    // Parse
-    const lecturaXML = (direccion) => {
-      let data = fs.readFileSync(direccion, "utf8");
-      return data;
-    };
+export const lanzaderaCat = () => {
+  let driver = new Builder().forBrowser("chrome").build();
 
-    let cat = lecturaXML("./static/biblioteques.xml");
+  let consultaPreviaCAT = con.awaitQuery(
+    "SELECT * FROM `provincia` WHERE `nombre` = 'Barcelona'"
+  );
+  consultaPreviaCAT.then((data) => {
+    if (data[0] === undefined) {
+      driver.get("http://distritopostal.es");
+      // Parse
+      const lecturaXML = (direccion) => {
+        let data = fs.readFileSync(direccion, "utf8");
+        return data;
+      };
 
-    let json = parser.toJson(cat);
-    json = JSON.parse(json);
+      let cat = lecturaXML("./static/Archivos_demo/CAT.xml");
 
-    creacionInsertProvincia(json.response.row).then(() => {
-      creacionInsertLocalidad(json.response.row).then(() => {
-        creacionInsertBiblioteca(json.response.row);
+      let json = parser.toJson(cat);
+      json = JSON.parse(json);
+
+      creacionInsertProvincia(json.response.row).then(() => {
+        creacionInsertLocalidad(json.response.row).then(() => {
+          creacionInsertBiblioteca(json.response.row);
+        });
       });
-    });
-  } else {
-    console.log("La base de datos de Catalunya ya esta cargada");
-  }
-});
-
-module.exports = consultaPrevia;
+    } else {
+      console.log("La base de datos de Catalunya ya esta cargada");
+    }
+  });
+};

@@ -138,20 +138,20 @@ const creacionInsertBiblioteca = async (fichero) => {
   await con.awaitQuery(insertBiblioteca);
 };
 
-let eus = lecturaJSON("./static/bibliotecas.json");
-const consultaPreviaEUS = con.awaitQuery(
-  "SELECT * FROM `provincia` WHERE `nombre` = 'Gipuzkoa' "
-);
-consultaPreviaEUS.then((data) => {
-  if (data[0] == undefined) {
-    creacionInsertProvincia(eus).finally(() => {
-      creacionInsertLocalidad(eus).finally(() => {
-        creacionInsertBiblioteca(eus);
+export const lanzaderaEus = () => {
+  let eus = lecturaJSON("./static/Archivos_demo/EUS.json");
+  const consultaPreviaEUS = con.awaitQuery(
+    "SELECT * FROM `provincia` WHERE `nombre` = 'Gipuzkoa' "
+  );
+  consultaPreviaEUS.then((data) => {
+    if (data[0] == undefined) {
+      creacionInsertProvincia(eus).finally(() => {
+        creacionInsertLocalidad(eus).finally(() => {
+          creacionInsertBiblioteca(eus);
+        });
       });
-    });
-  } else {
-    console.log("La base de datos de Euskadi ya está cargada");
-  }
-});
-
-module.exports = consultaPreviaEUS;
+    } else {
+      console.log("La base de datos de Euskadi ya está cargada");
+    }
+  });
+};

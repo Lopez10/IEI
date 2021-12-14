@@ -1,33 +1,8 @@
 const { con } = require("../app");
 
-const { Builder, Key, By, Window } = require("selenium-webdriver");
+const { Builder, By } = require("selenium-webdriver");
 let driver;
 const csvtojson = require("csvtojson");
-const csvFilePath = "./static/directorio-de-bibliotecas-valencianas_2020.csv";
-
-const consultaPreviaCV = con.awaitQuery(
-  "SELECT * FROM `provincia` WHERE `nombre` = 'VALENCIA'"
-);
-
-consultaPreviaCV.then((dataConsulta) => {
-  if (dataConsulta[0] == undefined) {
-    driver = new Builder().forBrowser("chrome").build();
-    driver.get("https://www.coordenadas-gps.com");
-    driver.executeScript("window.scroll(0, 1000)");
-
-    const converter = csvtojson({ delimiter: ";" });
-
-    converter.fromFile(csvFilePath).then((data) => {
-      creacionInsertProvincia(data).finally(() => {
-        creacionInsertLocalidad(data).finally(() => {
-          creacionInsertBiblioteca(data);
-        });
-      });
-    });
-  } else {
-    console.log("Las bibliotecas de la Comunidad Valenciana han sido cargadas");
-  }
-});
 
 // Inserts
 const creacionInsertProvincia = async (fichero) => {
@@ -170,4 +145,32 @@ const creacionInsertBiblioteca = async (fichero) => {
   await con.awaitQuery(insertBiblioteca);
 };
 
-module.exports = consultaPreviaCV;
+export const lanzaderaCv = () => {
+  const csvFilePath = "./static/Archivos_demo/CV.csv";
+
+  const consultaPreviaCV = con.awaitQuery(
+    "SELECT * FROM `provincia` WHERE `nombre` = 'VALENCIA'"
+  );
+
+  consultaPreviaCV.then((dataConsulta) => {
+    if (dataConsulta[0] == undefined) {
+      driver = new Builder().forBrowser("chrome").build();
+      driver.get("https://www.coordenadas-gps.com");
+      driver.executeScript("window.scroll(0, 1000)");
+
+      const converter = csvtojson({ delimiter: ";" });
+
+      converter.fromFile(csvFilePath).then((data) => {
+        creacionInsertProvincia(data).finally(() => {
+          creacionInsertLocalidad(data).finally(() => {
+            creacionInsertBiblioteca(data);
+          });
+        });
+      });
+    } else {
+      console.log(
+        "Las bibliotecas de la Comunidad Valenciana han sido cargadas"
+      );
+    }
+  });
+};
