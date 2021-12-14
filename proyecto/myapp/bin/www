@@ -5,6 +5,7 @@
  */
 
 let { app } = require("../app");
+let { con } = require("../bd");
 let debug = require("debug")("myapp:server");
 let http = require("http");
 

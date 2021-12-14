@@ -1,6 +1,6 @@
 const fs = require("fs");
 const parser = require("xml2json");
-const { con } = require("../app");
+const { con } = require("../bd");
 const { Builder, Key, By } = require("selenium-webdriver");
 
 const creacionInsertProvincia = async (fichero) => {
@@ -138,14 +138,13 @@ const creacionInsertBiblioteca = async (fichero) => {
   con.awaitQuery(insertBiblioteca);
 };
 
-export const lanzaderaCat = () => {
-  let driver = new Builder().forBrowser("chrome").build();
-
+const lanzaderaCat = () => {
   let consultaPreviaCAT = con.awaitQuery(
     "SELECT * FROM `provincia` WHERE `nombre` = 'Barcelona'"
   );
   consultaPreviaCAT.then((data) => {
     if (data[0] === undefined) {
+      let driver = new Builder().forBrowser("chrome").build();
       driver.get("http://distritopostal.es");
       // Parse
       const lecturaXML = (direccion) => {
@@ -168,3 +167,5 @@ export const lanzaderaCat = () => {
     }
   });
 };
+
+module.exports = lanzaderaCat;

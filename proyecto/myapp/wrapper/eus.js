@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { con } = require("../app");
+const { con } = require("../bd");
 
 const lecturaJSON = (direccion) => {
   let data = fs.readFileSync(direccion, "utf8");
@@ -138,7 +138,7 @@ const creacionInsertBiblioteca = async (fichero) => {
   await con.awaitQuery(insertBiblioteca);
 };
 
-export const lanzaderaEus = () => {
+const lanzaderaEus = () => {
   let eus = lecturaJSON("./static/Archivos_demo/EUS.json");
   const consultaPreviaEUS = con.awaitQuery(
     "SELECT * FROM `provincia` WHERE `nombre` = 'Gipuzkoa' "
@@ -155,3 +155,5 @@ export const lanzaderaEus = () => {
     }
   });
 };
+
+module.exports = lanzaderaEus;

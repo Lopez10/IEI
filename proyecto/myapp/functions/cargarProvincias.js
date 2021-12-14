@@ -1,9 +1,11 @@
-const { lanzaderaCat } = require("../wrapper/cat");
-const { lanzaderaCv } = require("../wrapper/cv2");
-const { lanzaderaEus } = require("../wrapper/eus");
+const cargaCatalunya = require("../wrapper/cat");
+const cargarCv = require("../wrapper/cv2");
+const cargarEus = require("../wrapper/eus");
 
-export const cargarProvincia = (provincia) => {
-  if (provincia === "CV") lanzaderaCv();
-  else if (provincia === "EUS") lanzaderaEus();
-  else if (provincia === "CAT") lanzaderaCat();
+const cargarProvincia = async (provincia) => {
+  if (provincia === "CV") await cargarCv();
+  else if (provincia === "EUS") cargarEus();
+  else if (provincia === "CAT") cargaCatalunya();
 };
+
+module.exports = cargarProvincia;

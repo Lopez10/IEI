@@ -1,4 +1,4 @@
-const { con } = require("../app");
+const { con } = require("../bd");
 
 const { Builder, By } = require("selenium-webdriver");
 let driver;
@@ -145,14 +145,13 @@ const creacionInsertBiblioteca = async (fichero) => {
   await con.awaitQuery(insertBiblioteca);
 };
 
-export const lanzaderaCv = () => {
+const lanzaderaCv = async () => {
   const csvFilePath = "./static/Archivos_demo/CV.csv";
-
   const consultaPreviaCV = con.awaitQuery(
     "SELECT * FROM `provincia` WHERE `nombre` = 'VALENCIA'"
   );
-
   consultaPreviaCV.then((dataConsulta) => {
+    console.log(dataConsulta);
     if (dataConsulta[0] == undefined) {
       driver = new Builder().forBrowser("chrome").build();
       driver.get("https://www.coordenadas-gps.com");
@@ -174,3 +173,5 @@ export const lanzaderaCv = () => {
     }
   });
 };
+
+module.exports = lanzaderaCv;

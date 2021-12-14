@@ -4,22 +4,6 @@ let path = require("path");
 
 let indexRouter = require("./routes/index");
 
-// DataBase
-const mysql = require("mysql-await");
-const con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "root",
-  database: "IEI",
-});
-con.connect(function (err) {
-  if (err) {
-    console.log("Error connecting to Db");
-    return;
-  }
-  console.log("Connection established");
-});
-
 let app = express();
 
 app.use(express.json());
@@ -45,4 +29,4 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
 });
 
-module.exports = { app, con };
+module.exports = { app };
