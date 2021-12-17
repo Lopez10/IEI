@@ -5,7 +5,6 @@ const {
 } = require("../functions/cargarProvincias");
 const router = express.Router();
 
-/* GET home page. */
 router.get("/", function (req, res) {
   res.send("respond with a resource");
 });
@@ -18,10 +17,10 @@ router.post("/provincias", async (req, res) => {
   });
 });
 
-router.get("/provincias/:provincia", async (req, res) => {
-  let nombre = req.params.provincia;
-  let data = await busquedaPorNombre(nombre);
-  console.log(data);
-  // return data;
+router.get("/busqueda", async (req, res) => {
+  let data = req.params;
+  let result = await busquedaPorNombre(data);
+  console.log(result);
+  // return result;
 });
 module.exports = router;

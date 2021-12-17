@@ -5,7 +5,7 @@ USE IEI;
 CREATE TABLE provincia(
 	id_provincia INT AUTO_INCREMENT,
 	nombre VARCHAR(150) NOT NULL,
-	codigo INT NOT NULL,
+	codigo VARCHAR(2) NOT NULL,
 	PRIMARY KEY(id_provincia)
 );
 
@@ -13,7 +13,7 @@ CREATE TABLE localidad(
 	id_localidad INT AUTO_INCREMENT,
 	id_provincia INT NOT NULL,
 	nombre VARCHAR(150) NOT NULL,
-	codigo INT NOT NULL,
+	codigo VARCHAR(5) NOT NULL,
 	PRIMARY KEY(id_localidad),
 	FOREIGN KEY(id_provincia) REFERENCES provincia(id_provincia)
 );
@@ -24,10 +24,10 @@ CREATE TABLE biblioteca (
 	nombre VARCHAR(150) NOT NULL,
 	tipo VARCHAR(10) NOT NULL,
 	direccion VARCHAR(300) NOT NULL,
-	codigoPostal int(5) NOT NULL,
+	codigoPostal CHAR(5) NOT NULL,
 	longitud DOUBLE, 
 	latitud DOUBLE,
-	telefono INT,
+	telefono VARCHAR(9),
 	email VARCHAR(120),
 	descripcion VARCHAR(600),
 	PRIMARY KEY(id_biblioteca),

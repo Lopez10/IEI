@@ -61,9 +61,12 @@ const creacionInsertLocalidad = async (fichero) => {
           // Creacion del string
           insertLocalidad += `(${
             localidades[localidades.length - 1].id_provincia
-          }, "${localidades[localidades.length - 1].nombre}", ${
-            localidades[localidades.length - 1].codigo
-          }),`;
+          }, "${localidades[localidades.length - 1].nombre}", ${localidades[
+            localidades.length - 1
+          ].codigo.substring(
+            1,
+            localidades[localidades.length - 1].codigo.length - 1
+          )}),`;
           contadorLocalidades++;
         }
       }
@@ -131,6 +134,7 @@ const creacionInsertBiblioteca = async (fichero) => {
         }
       }
     }
+    console.log(bibliotecas);
   }
 
   insertBiblioteca = insertBiblioteca.substring(0, insertBiblioteca.length - 1);
