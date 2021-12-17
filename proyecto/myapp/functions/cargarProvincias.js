@@ -8,4 +8,8 @@ const cargarProvincia = async (provincia) => {
   else if (provincia === "CAT") cargaCatalunya();
 };
 
-module.exports = cargarProvincia;
+const busquedaPorNombre = async (biblioteca) => {
+  `SELECT * FROM 'biblioteca' WHERE 'nombre' LIKE '${biblioteca}%'`;
+};
+
+module.exports = { cargarProvincia, busquedaPorNombre };

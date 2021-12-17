@@ -2,6 +2,7 @@ const fs = require("fs");
 const parser = require("xml2json");
 const { con } = require("../bd");
 const { Builder, Key, By } = require("selenium-webdriver");
+let driver;
 
 const creacionInsertProvincia = async (fichero) => {
   let insertProvincia = "INSERT INTO provincia (nombre, codigo) VALUES ";
@@ -144,7 +145,7 @@ const lanzaderaCat = () => {
   );
   consultaPreviaCAT.then((data) => {
     if (data[0] === undefined) {
-      let driver = new Builder().forBrowser("chrome").build();
+      driver = new Builder().forBrowser("chrome").build();
       driver.get("http://distritopostal.es");
       // Parse
       const lecturaXML = (direccion) => {

@@ -151,7 +151,6 @@ const lanzaderaCv = async () => {
     "SELECT * FROM `provincia` WHERE `nombre` = 'VALENCIA'"
   );
   consultaPreviaCV.then((dataConsulta) => {
-    console.log(dataConsulta);
     if (dataConsulta[0] == undefined) {
       driver = new Builder().forBrowser("chrome").build();
       driver.get("https://www.coordenadas-gps.com");

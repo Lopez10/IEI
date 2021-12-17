@@ -1,5 +1,8 @@
 const express = require("express");
-const cargarProvincia = require("../functions/cargarProvincias");
+const {
+  cargarProvincia,
+  busquedaPorNombre,
+} = require("../functions/cargarProvincias");
 const router = express.Router();
 
 /* GET home page. */
@@ -7,7 +10,7 @@ router.get("/", function (req, res) {
   res.send("respond with a resource");
 });
 
-router.post("/provincias", async function (req, res) {
+router.post("/provincias", async (req, res) => {
   await cargarProvincia(req.body.provincia);
   res.render("index", {
     title: req.body.provincia,
@@ -15,4 +18,10 @@ router.post("/provincias", async function (req, res) {
   });
 });
 
+router.get("/provincias/:provincia", async (req, res) => {
+  let nombre = req.params.provincia;
+  let data = await busquedaPorNombre(nombre);
+  console.log(data);
+  // return data;
+});
 module.exports = router;
