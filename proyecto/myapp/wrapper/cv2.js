@@ -1,5 +1,5 @@
 const { con } = require("../bd");
-
+require("chromedriver");
 const { Builder, By } = require("selenium-webdriver");
 let driver;
 const csvtojson = require("csvtojson");

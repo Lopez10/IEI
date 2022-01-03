@@ -1,6 +1,7 @@
 const fs = require("fs");
 const parser = require("xml2json");
 const { con } = require("../bd");
+require("chromedriver");
 const { Builder, Key, By } = require("selenium-webdriver");
 let driver;
 
