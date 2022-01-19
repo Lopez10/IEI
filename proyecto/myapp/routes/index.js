@@ -18,9 +18,8 @@ router.post("/provincias", async (req, res) => {
 });
 
 router.get("/busqueda", async (req, res) => {
-  let data = req.params;
+  let data = req.query;
   let result = await busquedaPorNombre(data);
-  console.log(result);
-  // return result;
+  res.send(result);
 });
 module.exports = router;
