@@ -1,0 +1,40 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title> Carga de datos </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Carga de datos</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <form (ngSubmit)="cargaForm()">
+    <ion-item>
+      <ion-select
+        [(ngModel)]="carga.fuente"
+        multiple="true"
+        placeholder="Selecciona fuente"
+        name="ft"
+      >
+        <ion-select-option value="todas">Seleccionar todas</ion-select-option>
+        <ion-select-option value="cat">Catalunya</ion-select-option>
+        <ion-select-option value="cv">Comunitat Valenciana</ion-select-option>
+        <ion-select-option value="eus">Euskadi</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-button type="submit" color="primary">Buscar</ion-button>
+  </form>
+
+  <ion-label>Resultados de la busqueda</ion-label>
+  <ion-list>
+    <!-- <ion-item *ngFor="let pelicula of peliculasBusqueda">
+      <ion-label [routerLink]="['/busqueda', pelicula.id]"
+        >{{ pelicula.title }}</ion-label
+      >
+    </ion-item> -->
+  </ion-list>
+</ion-content>
