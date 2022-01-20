@@ -5,6 +5,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Documento</title>
+    
+    <!-- CDN mapbox-->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css' rel='stylesheet' />
+    <style>
+      .mapboxgl-popup {
+        max-width: 200px;
+      }
+
+      .mapboxgl-popup-content {
+        text-align: center;
+        font-family: 'Open Sans', sans-serif;
+      }
+    </style>
+
   </head>
   <body>
     <form name="cargarProvincia" method="post" action="/provincias">
@@ -15,5 +30,10 @@
       </select>
       <input type="submit" value="Cargar" />
     </form>
+
+    <!-- Mapa -->
+    <div id='map' style='width: 400px; height: 300px;'></div>
+    <script src="./javascripts/map.js"></script>
+
   </body>
 </html>
