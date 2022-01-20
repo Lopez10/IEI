@@ -10,4 +10,9 @@ export class BusquedaService {
   realizarBusqueda(ruta: string) {
     return this.http.get(ruta);
   }
+
+  enviarCarga(ruta: string, data: any) {
+    console.log(ruta);
+    return this.http.post(ruta, data);
+  }
 }

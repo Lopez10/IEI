@@ -14,12 +14,11 @@
   <form (ngSubmit)="cargaForm()">
     <ion-item>
       <ion-select
-        [(ngModel)]="carga.fuente"
+        [(ngModel)]="provincias"
         multiple="true"
         placeholder="Selecciona fuente"
         name="ft"
       >
-        <ion-select-option value="todas">Seleccionar todas</ion-select-option>
         <ion-select-option value="cat">Catalunya</ion-select-option>
         <ion-select-option value="cv">Comunitat Valenciana</ion-select-option>
         <ion-select-option value="eus">Euskadi</ion-select-option>

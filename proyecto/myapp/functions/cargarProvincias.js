@@ -4,9 +4,11 @@ const cargarEus = require("../wrapper/eus");
 const { con } = require("../bd");
 
 const cargarProvincia = async (provincia) => {
-  if (provincia === "CV") await cargarCv();
-  else if (provincia === "EUS") cargarEus();
-  else if (provincia === "CAT") cargaCatalunya();
+  for (let i = 0; i < provincia.length; i++) {
+    if (provincia[i] === "cv") await cargarCv();
+    else if (provincia[i] === "eus") cargarEus();
+    else if (provincia[i] === "cat") cargaCatalunya();
+  }
 };
 
 const busquedaPorNombre = async ({ localidad, cp, provincia, tipo }) => {

@@ -145,7 +145,7 @@ const lanzaderaCat = () => {
     "SELECT * FROM `provincia` WHERE `nombre` = 'Barcelona'"
   );
   consultaPreviaCAT.then((data) => {
-    if (data[0] === undefined) {
+    if (data[0] == undefined) {
       driver = new Builder().forBrowser("chrome").build();
       driver.get("http://distritopostal.es");
       // Parse
