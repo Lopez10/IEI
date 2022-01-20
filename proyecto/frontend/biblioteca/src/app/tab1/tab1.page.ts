@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { BusquedaService } from '../services/busqueda.service';
 
 @Component({
   selector: 'app-tab1',
@@ -11,19 +11,38 @@ export class Tab1Page {
     localidad: '',
     cp: '',
     provincia: '',
-    tipo: '',
+    tipo: 'publica',
   };
 
-  ruta = 'http://localhost:3000/busqueda?';
+  result: any;
 
-  constructor(private http: HttpClient) {}
+  constructor(private busquedaService: BusquedaService) {}
 
   busquedaForm(): void {
-    console.log(this.todo);
+    this.obtenerBusqueda();
   }
 
   obtenerBusqueda() {
+    let ruta = 'http://localhost:3000/busqueda?';
     //TODO: Hacer ruta dinamica con el objeto todo
-    // return this.http.get(`ruta+${this.todo.localidad}&cp=${this.todo.cp}`);
+    if (this.todo.localidad !== '') {
+      ruta += `&localidad=${this.todo.localidad}`;
+    }
+    if (this.todo.cp !== '') {
+      ruta += `&cp=${this.todo.cp}`;
+    }
+    if (this.todo.provincia !== '') {
+      ruta += `&provincia=${this.todo.provincia}`;
+    }
+    if (this.todo.tipo !== '') {
+      ruta += `&tipo=${this.todo.tipo}`;
+    }
+
+    this.busquedaService
+      .realizarBusqueda(ruta.replace('&', ''))
+      .subscribe((data) => {
+        console.log(data);
+        this.result = data;
+      });
   }
 }

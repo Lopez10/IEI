@@ -20,6 +20,12 @@ router.post("/provincias", async (req, res) => {
 router.get("/busqueda", async (req, res) => {
   let data = req.query;
   let result = await busquedaPorNombre(data);
+  console.log(result);
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
   res.send(result);
 });
 module.exports = router;

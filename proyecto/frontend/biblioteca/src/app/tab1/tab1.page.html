@@ -45,7 +45,7 @@
         placeholder="Selecciona tipo"
         name="tip"
       >
-        <ion-select-option value="publica">pública</ion-select-option>
+        <ion-select-option value="publica" select>pública</ion-select-option>
         <ion-select-option value="privada">privada</ion-select-option>
       </ion-select>
     </ion-item>
@@ -57,6 +57,7 @@
 <ion-content>
   <ion-label>Resultados de la busqueda</ion-label>
   <ion-list>
+    <pre>{{result | json}}</pre>
     <!-- <ion-item *ngFor="let pelicula of peliculasBusqueda">
       <ion-label [routerLink]="['/busqueda', pelicula.id]"
         >{{ pelicula.title }}</ion-label

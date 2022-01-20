@@ -43,8 +43,7 @@ const busquedaPorNombre = async ({ localidad, cp, provincia, tipo }) => {
   findQuery += ";";
 
   let result = await con.awaitQuery(findQuery);
-  console.log(result);
-  // return result;
+  return result;
 };
 
 module.exports = { cargarProvincia, busquedaPorNombre };
