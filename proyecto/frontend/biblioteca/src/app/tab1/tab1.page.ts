@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { BusquedaService } from '../services/busqueda.service';
+import * as Mapboxgl from 'mapbox-gl';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-tab1',
@@ -13,7 +15,7 @@ export class Tab1Page {
     provincia: '',
     tipo: 'publica',
   };
-
+ 
   result: any;
 
   constructor(private busquedaService: BusquedaService) {}
@@ -45,4 +47,18 @@ export class Tab1Page {
         this.result = data;
       });
   }
+
+  //Mapa
+  ngOnInit() {
+    (Mapboxgl as any).accessToken = environment.mapboxKey;
+
+    var map = new Mapboxgl.Map({
+      container: 'mapa-mapbox', // container ID
+      style: 'mapbox://styles/mapbox/streets-v11', // style URL
+      center: [-3.70256, 40.4165], // starting position [lng, lat]
+      zoom: 4 // starting zoom
+    })
+  }
+
+  
 }
